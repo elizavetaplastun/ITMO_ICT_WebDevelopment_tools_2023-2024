@@ -3,13 +3,21 @@ import httpx
 from bs4 import BeautifulSoup
 from models import Article, TitleResponse, UrlRequest
 from db import get_db
+from db import engine
 from sqlmodel import SQLModel, Field, create_engine, Session
 from sqlalchemy.exc import SQLAlchemyError
 
 app = FastAPI()
 
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
+
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
 
 @app.post("/parse/", response_model=TitleResponse)
+
 async def parse_url(url_request: UrlRequest, db: Session = Depends(get_db)):
     async with httpx.AsyncClient() as client:
         try:
@@ -40,5 +48,4 @@ async def parse_url(url_request: UrlRequest, db: Session = Depends(get_db)):
 
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="localhost", port=8002)

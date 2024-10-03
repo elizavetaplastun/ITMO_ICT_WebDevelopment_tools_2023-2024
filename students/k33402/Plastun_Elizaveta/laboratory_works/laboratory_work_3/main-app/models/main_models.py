@@ -52,6 +52,8 @@ class Balance(BalanceDeafult, table=True):
 class UserBalance(BalanceDeafult):
     transactions: List[Transactions] = None
     targets: List[Target] = None
+    test: int = 0
+    #delite
 
 
 class TargetResponse(TargetDeafult):
